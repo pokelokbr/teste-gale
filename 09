@@ -1,0 +1,132 @@
+local library = {}
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local screen = game.Players.LocalPlayer.PlayerGui:WaitForChild("ScreenGui")
+
+-- Função para criar o painel
+function library:CreateMainPanel()
+    -- Criando o painel principal
+    local panel = Instance.new("Frame")
+    panel.Size = UDim2.new(0.35, 0, 0.6, 0)
+    panel.Position = UDim2.new(0.32, 0, 0.2, 0)
+    panel.BackgroundColor3 = Color3.fromRGB(25, 25, 25) -- Fundo escuro
+    panel.BackgroundTransparency = 0.85 -- Transparência para fundo suave
+    panel.AnchorPoint = Vector2.new(0.5, 0.5)
+    panel.Parent = screen
+
+    -- Adicionando bordas arredondadas
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 20)
+    corner.Parent = panel
+
+    -- Criando a sombra
+    local shadow = Instance.new("ImageLabel")
+    shadow.Name = "Shadow"
+    shadow.Parent = panel
+    shadow.BackgroundTransparency = 1
+    shadow.Size = UDim2.new(1, 12, 1, 12)
+    shadow.Position = UDim2.new(0, -6, 0, -6)
+    shadow.Image = "rbxassetid://1316045217" 
+    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.7
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+
+    -- Título do painel
+    local title = Instance.new("TextLabel")
+    title.Parent = panel
+    title.Size = UDim2.new(1, 0, 0.1, 0)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.Text = "Viena Hub - Painel"
+    title.TextSize = 28
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.BackgroundTransparency = 1
+    title.TextStrokeTransparency = 0.8
+
+    -- Botão de minimizar
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Parent = panel
+    minimizeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+    minimizeButton.Position = UDim2.new(0.9, 0, 0, 0)
+    minimizeButton.Text = "_"
+    minimizeButton.TextSize = 24
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    minimizeButton.BorderSizePixel = 0
+    minimizeButton.TextButtonMode = Enum.TextButtonMode.Button
+
+    -- Função de minimizar painel
+    minimizeButton.MouseButton1Click:Connect(function()
+        panel.Visible = false
+    end)
+
+    -- Função de restaurar o painel ao clicar fora dele
+    screen.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            if not panel.Visible then
+                panel.Visible = true
+            end
+        end
+    end)
+
+    return panel
+end
+
+-- Função para criar a galeria
+function library:CreateGallery()
+    -- Criando a galeria de painéis
+    local galleryPanel = Instance.new("Frame")
+    galleryPanel.Size = UDim2.new(0.35, 0, 0.55, 0)
+    galleryPanel.Position = UDim2.new(0.32, 0, 0.2, 0)
+    galleryPanel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    galleryPanel.BackgroundTransparency = 0.85
+    galleryPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+    galleryPanel.Parent = screen
+
+    -- Adicionando bordas arredondadas à galeria
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 20)
+    corner.Parent = galleryPanel
+
+    -- Título da galeria
+    local galleryTitle = Instance.new("TextLabel")
+    galleryTitle.Parent = galleryPanel
+    galleryTitle.Size = UDim2.new(1, 0, 0.1, 0)
+    galleryTitle.Position = UDim2.new(0, 0, 0, 0)
+    galleryTitle.Text = "Galeria de Funções"
+    galleryTitle.TextSize = 24
+    galleryTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    galleryTitle.BackgroundTransparency = 1
+
+    -- Criando os painéis da galeria
+    for i = 1, 3 do
+        local functionPanel = Instance.new("Frame")
+        functionPanel.Size = UDim2.new(0.9, 0, 0.2, 0)
+        functionPanel.Position = UDim2.new(0.05, 0, 0.2 * i, 0)
+        functionPanel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        functionPanel.BackgroundTransparency = 0.7
+        functionPanel.Parent = galleryPanel
+
+        -- Adicionando bordas arredondadas aos painéis da galeria
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 10)
+        corner.Parent = functionPanel
+
+        -- Botão dentro do painel
+        local actionButton = Instance.new("TextButton")
+        actionButton.Parent = functionPanel
+        actionButton.Size = UDim2.new(1, 0, 1, 0)
+        actionButton.Text = "Função " .. i
+        actionButton.TextSize = 24
+        actionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        actionButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+        actionButton.BorderSizePixel = 0
+        actionButton.TextButtonMode = Enum.TextButtonMode.Button
+
+        -- Função de clique no botão da galeria
+        actionButton.MouseButton1Click:Connect(function()
+            print("Função " .. i .. " acionada!")
+        end)
+    end
+end
+
+return library
