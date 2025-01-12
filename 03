@@ -1,0 +1,159 @@
+local library = {}
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService('RunService')
+local camera = workspace.CurrentCamera
+local Mouse = game.Players.LocalPlayer:GetMouse()
+
+function library:BlurFrame(getFrame)
+    -- Verificar se a pasta de efeitos já existe
+    if getFrame:FindFirstChild("BlurEffects") then
+        return getFrame:FindFirstChild("BlurEffects") -- Retorna a pasta existente se ela já foi criada
+    end
+    
+    local MTREL = "Glass"
+    local binds = {}
+    local root = Instance.new('Folder', camera)
+    root.Name = 'BlurEffects'
+
+    local gTokenMH = 99999999
+    local gToken = math.random(1, gTokenMH)
+
+    local DepthOfField = Instance.new('DepthOfFieldEffect', game:GetService('Lighting'))
+    DepthOfField.FarIntensity = 0
+    DepthOfField.FocusDistance = 51.6
+    DepthOfField.InFocusRadius = 50
+    DepthOfField.NearIntensity = 1
+    DepthOfField.Name = "DPT_"..gToken
+
+    local frame = Instance.new('Frame')
+    frame.Parent = getFrame
+    frame.Size = UDim2.new(0.95, 0, 0.95, 0)
+    frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10) -- Fundo preto elegante
+    frame.BackgroundTransparency = 0.2 -- Transparência sutil
+    frame.BorderSizePixel = 0
+
+    -- Imagem de fundo
+    local backgroundImage = Instance.new('ImageLabel')
+    backgroundImage.Parent = frame
+    backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+    backgroundImage.Position = UDim2.new(0, 0, 0, 0)
+    backgroundImage.BackgroundTransparency = 1
+    backgroundImage.Image = "rbxassetid://81294942824393"
+    backgroundImage.ImageTransparency = 0.5 -- Leve transparência para o fundo
+
+    -- Bordas arredondadas
+    local corner = Instance.new('UICorner')
+    corner.CornerRadius = UDim.new(0, 15)
+    corner.Parent = frame
+
+    -- Sombra externa aprimorada
+    local shadow = Instance.new('ImageLabel')
+    shadow.Name = "Shadow"
+    shadow.Parent = frame
+    shadow.BackgroundTransparency = 1
+    shadow.Size = UDim2.new(1, 50, 1, 50)
+    shadow.Position = UDim2.new(0.5, 0, 0.5, 10)
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    shadow.Image = "rbxassetid://1316045217"
+    shadow.ImageTransparency = 0.7
+    shadow.ImageColor3 = Color3.fromRGB(0, 255, 255) -- Ciano vibrante
+    shadow.ZIndex = 0
+
+    -- Borda externa animada
+    local border = Instance.new('UIStroke')
+    border.Parent = frame
+    border.Color = Color3.fromRGB(0, 200, 200)
+    border.Thickness = 2
+
+    -- Efeito de gradiente na borda
+    local gradient = Instance.new('UIGradient')
+    gradient.Parent = frame
+    gradient.Rotation = 45
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 50, 50))
+    }
+
+    -- Repositórios no topo
+    local repoFrame = Instance.new('Frame')
+    repoFrame.Parent = frame
+    repoFrame.Size = UDim2.new(1, 0, 0.1, 0)
+    repoFrame.Position = UDim2.new(0, 0, 0, 0)
+    repoFrame.BackgroundTransparency = 1
+
+    local repoTitle = Instance.new('TextLabel')
+    repoTitle.Parent = repoFrame
+    repoTitle.Size = UDim2.new(1, -20, 1, 0)
+    repoTitle.Position = UDim2.new(0.5, 0, 0, 0)
+    repoTitle.AnchorPoint = Vector2.new(0.5, 0)
+    repoTitle.BackgroundTransparency = 1
+    repoTitle.Text = "Novo Nome do Repositório"  -- Substitua com o nome correto
+    repoTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
+    repoTitle.Font = Enum.Font.GothamBold
+    repoTitle.TextScaled = true
+    repoTitle.TextStrokeTransparency = 0.75
+    repoTitle.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    -- Título fixo para demonstrar estética
+    local title = Instance.new('TextLabel')
+    title.Parent = frame
+    title.Size = UDim2.new(1, -20, 0.1, 0)
+    title.Position = UDim2.new(0.5, 0, 0.1, 0)
+    title.AnchorPoint = Vector2.new(0.5, 0)
+    title.BackgroundTransparency = 1
+    title.Text = "Gomu Hub"
+    title.TextColor3 = Color3.fromRGB(0, 255, 255)
+    title.Font = Enum.Font.GothamBold
+    title.TextScaled = true
+    title.TextStrokeTransparency = 0.75
+    title.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    -- Barra lateral estilizada (slider fixo com limite)
+    local slider = Instance.new('Frame')
+    slider.Parent = frame
+    slider.Size = UDim2.new(0.02, 0, 0.8, 0)
+    slider.Position = UDim2.new(0.98, 0, 0.1, 0)
+    slider.AnchorPoint = Vector2.new(1, 0)
+    slider.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+    slider.BackgroundTransparency = 0.1
+
+    local sliderCorner = Instance.new('UICorner')
+    sliderCorner.CornerRadius = UDim.new(0, 5)
+    sliderCorner.Parent = slider
+
+    local sliderGradient = Instance.new('UIGradient')
+    sliderGradient.Parent = slider
+    sliderGradient.Rotation = 90
+    sliderGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 100, 100))
+    }
+
+    -- Efeito de transição sutil ao interagir
+    frame.MouseEnter:Connect(function()
+        TweenService:Create(frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.1}):Play()
+    end)
+
+    frame.MouseLeave:Connect(function()
+        TweenService:Create(frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.2}):Play()
+    end)
+
+    -- Adicionando o Tap2 no topo
+    local Tap2 = Instance.new('TextButton')
+    Tap2.Parent = frame
+    Tap2.Size = UDim2.new(0.2, 0, 0.1, 0)
+    Tap2.Position = UDim2.new(0.5, 0, 0, -20)
+    Tap2.AnchorPoint = Vector2.new(0.5, 0)
+    Tap2.Text = "Tap2"
+    Tap2.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+    Tap2.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Tap2.Font = Enum.Font.GothamBold
+    Tap2.TextScaled = true
+
+    return frame
+end
+
+return library
